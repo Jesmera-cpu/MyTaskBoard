@@ -1,12 +1,12 @@
 // --- CONFIGURATION ---
 const firebaseConfig = {
-  apiKey: "PASTE_YOUR_API_KEY",
-  authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://PASTE_YOUR_PROJECT.firebaseio.com",
-  projectId: "PASTE_YOUR_PROJECT",
-  storageBucket: "PASTE_YOUR_PROJECT.appspot.com",
-  messagingSenderId: "PASTE_YOUR_ID",
-  appId: "PASTE_YOUR_APP_ID"
+  apiKey: "AIzaSyCVlLwkDOdl8ygT1VK5j0Ttf1Xig8_QWXY",
+  authDomain: "mytaskboard-jesmera97.firebaseapp.com",
+  databaseURL: "https://mytaskboard-jesmera97-default-rtdb.firebaseio.com",
+  projectId: "mytaskboard-jesmera97",
+  storageBucket: "mytaskboard-jesmera97.firebasestorage.app",
+  messagingSenderId: "358230816111",
+  appId: "1:358230816111:web:34f94e754581299617249a"
 };
 
 firebase.initializeApp(firebaseConfig);
