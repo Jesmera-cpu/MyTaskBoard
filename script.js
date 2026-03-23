@@ -33,13 +33,13 @@ function renderTasks() {
         if (t.type === 'daily') {
             el.className = 'daily-item';
             el.innerHTML = `
-                <input type="checkbox" class="daily-checkbox" ${t.completed ? 'checked' : ''} onchange="toggleDaily(${t.id})">
-                <div style="margin-left:12px">
-                    <div style="font-weight:700">${t.title}</div>
-                    <div class="timestamp-label">${t.lastDone ? 'Done at: ' + t.lastDone : 'Not completed today'}</div>
-                </div>
-            `;
-            document.getElementById('list-daily').appendChild(el);
+              <input type="checkbox" class="daily-checkbox" ${t.completed ? 'checked' : ''} onchange="toggleDaily(${t.id})">
+              <div style="margin-left:12px; cursor:pointer;" onclick="editTask(${t.id})">
+                  <div style="font-weight:700">${t.title}</div>
+                  <div class="timestamp-label">${t.lastDone ? 'Done at: ' + t.lastDone : 'Not completed today'}</div>
+              </div>
+    `;
+    document.getElementById('list-daily').appendChild(el);
         } else {
             el.className = `task-card card-${t.priority}`;
             el.dataset.id = t.id;
