@@ -95,18 +95,26 @@ function toggleDaily(id) {
     if (t.completed) {
         t.lastDone = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         
-        // STREAK LOGIC
         if (!t.streak) t.streak = 0;
-        
         if (t.lastDoneDate === yesterdayStr) {
-            t.streak += 1; // Continued from yesterday
+            t.streak += 1;
         } else if (t.lastDoneDate !== today) {
-            t.streak = 1; // Started new streak today
+            t.streak = 1;
         }
         t.lastDoneDate = today;
-    } else {
-        // If they accidentally checked it and uncheck it, 
-        // we won't lose the streak, just the "done" status for today.
+
+        // --- THE VIBE CHECK: CONFETTI ---
+        const allDailies = tasks.filter(task => task.type === 'daily');
+        const allDone = allDailies.every(task => task.completed);
+        
+        if (allDone) {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#a29bfe', '#6c5ce7', '#fab1a0']
+            });
+        }
     }
     sync();
 }
