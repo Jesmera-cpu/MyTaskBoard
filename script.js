@@ -31,16 +31,20 @@ function renderTasks() {
 
         const el = document.createElement('div');
         if (t.type === 'daily') {
-            el.className = 'daily-item';
-            el.innerHTML = `
-              <input type="checkbox" class="daily-checkbox" ${t.completed ? 'checked' : ''} onchange="toggleDaily(${t.id})">
-              <div style="margin-left:12px; cursor:pointer;" onclick="editTask(${t.id})">
-                  <div style="font-weight:700">${t.title}</div>
-                  <div class="timestamp-label">${t.lastDone ? 'Done at: ' + t.lastDone : 'Not completed today'}</div>
-              </div>
+    el.className = 'daily-item';
+    const streakDisplay = t.streak > 0 ? `<span style="color:#ff7675; margin-left:10px;">🔥 ${t.streak}</span>` : '';
+    
+    el.innerHTML = `
+        <input type="checkbox" class="daily-checkbox" ${t.completed ? 'checked' : ''} onchange="toggleDaily(${t.id})">
+        <div style="margin-left:12px; cursor:pointer; flex:1;" onclick="editTask(${t.id})">
+            <div style="display:flex; align-items:center; font-weight:700;">
+                ${t.title} ${streakDisplay}
+            </div>
+            <div class="timestamp-label">${t.lastDone ? 'Done: ' + t.lastDone : 'Not done today'}</div>
+        </div>
     `;
     document.getElementById('list-daily').appendChild(el);
-        } else {
+} else {
             el.className = `task-card card-${t.priority}`;
             el.dataset.id = t.id;
             el.dataset.date = t.datetime;
@@ -81,8 +85,29 @@ function saveTask() {
 
 function toggleDaily(id) {
     const t = tasks.find(x => x.id === id);
+    const today = new Date().toLocaleDateString();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toLocaleDateString();
+
     t.completed = !t.completed;
-    t.lastDone = t.completed ? new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : t.lastDone;
+
+    if (t.completed) {
+        t.lastDone = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        
+        // STREAK LOGIC
+        if (!t.streak) t.streak = 0;
+        
+        if (t.lastDoneDate === yesterdayStr) {
+            t.streak += 1; // Continued from yesterday
+        } else if (t.lastDoneDate !== today) {
+            t.streak = 1; // Started new streak today
+        }
+        t.lastDoneDate = today;
+    } else {
+        // If they accidentally checked it and uncheck it, 
+        // we won't lose the streak, just the "done" status for today.
+    }
     sync();
 }
 
@@ -156,3 +181,38 @@ function editTask(id) {
 }
 
 setInterval(triggerAlerts, 60000);
+
+function checkDailyReset() {
+    const lastResetDate = localStorage.getItem('lastResetDate');
+    const today = new Date().toLocaleDateString();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toLocaleDateString();
+
+    if (lastResetDate !== today) {
+        let changed = false;
+        tasks.forEach(t => {
+            if (t.type === 'daily') {
+                // If it wasn't done yesterday, reset the streak to 0
+                if (t.lastDoneDate !== yesterdayStr && t.lastDoneDate !== today) {
+                    t.streak = 0;
+                }
+                // Reset daily checkbox
+                if (t.completed) {
+                    t.completed = false;
+                    changed = true;
+                }
+            }
+        });
+
+        if (changed) {
+            sync();
+            localStorage.setItem('lastResetDate', today);
+        }
+    }
+}
+
+// Run this check every time the app loads
+db.once('value', () => {
+    checkDailyReset();
+});
