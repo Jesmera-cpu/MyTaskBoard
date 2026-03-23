@@ -109,8 +109,8 @@ function toggleDaily(id) {
         
         if (allDone) {
             confetti({
-                particleCount: 150,
-                spread: 70,
+                particleCount: 250,
+                spread: 80,
                 origin: { y: 0.6 },
                 colors: ['#a29bfe', '#6c5ce7', '#fab1a0']
             });
