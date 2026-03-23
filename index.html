@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Life Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+
+<div class="header-controls">
+    <input type="text" id="search-bar" placeholder="Search tasks..." oninput="renderTasks()">
+    <button class="btn-header" id="sync-indicator">Cloud Synced</button>
+</div>
+
+<div class="board">
+    <div class="column" id="col-daily">
+        <div class="column-header" style="color:#a29bfe">Daily Habits</div>
+        <div class="task-list" id="list-daily"></div>
+    </div>
+    <div class="column" id="col-completed">
+        <div class="column-header" style="color:#2ecc71">Completed</div>
+        <div class="task-list" id="list-completed"></div>
+    </div>
+    <div class="column" id="col-p1">
+        <div class="column-header" style="color:#e74c3c">Priority 1</div>
+        <div class="task-list" id="list-p1"></div>
+    </div>
+    <div class="column" id="col-p2">
+        <div class="column-header" style="color:#f39c12">Priority 2</div>
+        <div class="task-list" id="list-p2"></div>
+    </div>
+    <div class="column" id="col-p3">
+        <div class="column-header" style="color:#3498db">Priority 3</div>
+        <div class="task-list" id="list-p4"></div>
+    </div>
+</div>
+
+<button class="fab" onclick="openModal()">+</button>
+
+<div id="modal-overlay" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 id="modal-title-text">Task Details</h2>
+        <div class="form-group">
+            <label>Title</label>
+            <div style="display:flex; gap:8px;">
+                <input type="text" id="task-title" placeholder="Workout, Homework, etc.">
+                <button type="button" class="btn-icon" onclick="startVoice('task-title')">🎤</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Due Date & Time</label>
+            <input type="datetime-local" id="task-datetime">
+        </div>
+        <div class="form-group">
+            <label>Task Type</label>
+            <select id="task-type" onchange="togglePriorityDropdown()">
+                <option value="standard">Standard Task</option>
+                <option value="daily">Daily Habit</option>
+            </select>
+        </div>
+        <div class="form-group" id="priority-group">
+            <label>Priority Column</label>
+            <select id="task-priority">
+                <option value="p1">Priority 1</option>
+                <option value="p2">Priority 2</option>
+                <option value="p3">Priority 3</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Information</label>
+            <div style="display:flex; gap:8px;">
+                <textarea id="task-info" rows="4"></textarea>
+                <button type="button" class="btn-icon" onclick="startVoice('task-info')">🎤</button>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-save-modal" onclick="saveTask()">Save to Cloud</button>
+            <button id="btn-delete" class="btn btn-delete" style="display:none;" onclick="deleteTask()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
